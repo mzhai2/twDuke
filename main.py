@@ -16,11 +16,15 @@ APP_KEY = 'kK38G4kaJ96PjsTVeLydA'
 APP_SECRET = 'yLFu9sgN7Bw0e3QWuXzHzOts9zkPaojmRRVDnNE8vhY'
 
 twitter = Twython(APP_KEY, APP_SECRET, oauth_version=1)
-auth = twitter.get_authentication_tokens()
+
+auth = twitter.get_authentication_tokens(callback_url='http://www.emorywiki.com')
 OAUTH_TOKEN = auth['oauth_token']
 OAUTH_TOKEN_SECRET = auth['oauth_token_secret']
+twitter = Twython(APP_KEY, APP_SECRET,
+                  OAUTH_TOKEN, OAUTH_TOKEN_SECRET)
 
-
+# print 'https://api.twitter.com/oauth/authorize?oauth_token='+OAUTH_TOKEN;
+print auth['auth_url']
 # twitter.search(q='python')
 #search = twitter.search_gen('python')
 #for result in search:
