@@ -9,12 +9,35 @@
 #Access level 	Read-only
 
 from twython import Twython
+from twython import TwythonStreamer
+import sys, getopt
 
 APP_KEY = 'kK38G4kaJ96PjsTVeLydA'
 APP_SECRET = 'yLFu9sgN7Bw0e3QWuXzHzOts9zkPaojmRRVDnNE8vhY'
 
-twitter = Twython(APP_KEY, APP_SECRET, oauth_version=2)
-ACCESS_TOKEN = twitter.obtain_access_token()
-twitter = Twython(APP_KEY, access_token = ACCESS_TOKEN)
+twitter = Twython(APP_KEY, APP_SECRET, oauth_version=1)
+auth = twitter.get_authentication_tokens()
+OAUTH_TOKEN = auth['oauth_token']
+OAUTH_TOKEN_SECRET = auth['oauth_token_secret']
 
-twitter.search(q='python', result_type='popular')
+
+# twitter.search(q='python')
+#search = twitter.search_gen('python')
+#for result in search:
+#    print result
+
+class MyStreamer(TwythonStreamer):
+    def on_success(self, data):
+        if 'text' in data:
+            print data['text'].encode('utf-8')
+
+    def on_error(self, status_code, data):
+        print status_code
+
+        # Want to stop trying to get data because of the error?
+        # Uncomment the next line!
+        self.disconnect()
+
+stream = MyStreamer(APP_KEY, APP_SECRET,
+                    OAUTH_TOKEN, OAUTH_TOKEN_SECRET)
+stream.statuses.filter(track='twitter')
