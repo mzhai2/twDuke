@@ -12,24 +12,6 @@ from twython import Twython
 from twython import TwythonStreamer
 import sys, getopt
 
-APP_KEY = 'kK38G4kaJ96PjsTVeLydA'
-APP_SECRET = 'yLFu9sgN7Bw0e3QWuXzHzOts9zkPaojmRRVDnNE8vhY'
-
-twitter = Twython(APP_KEY, APP_SECRET, oauth_version=1)
-
-auth = twitter.get_authentication_tokens(callback_url='http://www.emorywiki.com')
-OAUTH_TOKEN = auth['oauth_token']
-OAUTH_TOKEN_SECRET = auth['oauth_token_secret']
-twitter = Twython(APP_KEY, APP_SECRET,
-                  OAUTH_TOKEN, OAUTH_TOKEN_SECRET)
-
-# print 'https://api.twitter.com/oauth/authorize?oauth_token='+OAUTH_TOKEN;
-print auth['auth_url']
-# twitter.search(q='python')
-#search = twitter.search_gen('python')
-#for result in search:
-#    print result
-
 class MyStreamer(TwythonStreamer):
     def on_success(self, data):
         if 'text' in data:
@@ -42,6 +24,31 @@ class MyStreamer(TwythonStreamer):
         # Uncomment the next line!
         self.disconnect()
 
-stream = MyStreamer(APP_KEY, APP_SECRET,
-                    OAUTH_TOKEN, OAUTH_TOKEN_SECRET)
-stream.statuses.filter(track='twitter')
+APP_KEY = 'kK38G4kaJ96PjsTVeLydA'
+APP_SECRET = 'yLFu9sgN7Bw0e3QWuXzHzOts9zkPaojmRRVDnNE8vhY'
+
+twitter = Twython(APP_KEY, APP_SECRET)
+auth = twitter.get_authentication_tokens()
+
+
+OAUTH_TOKEN = auth['oauth_token']
+OAUTH_TOKEN_SECRET = auth['auth_url']
+print OAUTH_TOKEN
+print OAUTH_TOKEN_SECRET
+
+
+oauth_verifier = raw_input()
+
+twitter = Twython(APP_KEY, APP_SECRET, OAUTH_TOKEN, OAUTH_TOKEN_SECRET)
+final_step = twitter.get_authorized_tokens('oauth_verifier')
+print final_step
+OAUTH_TOKEN = final_step[OAUTH_TOKEN]
+OAUTH_TOKEN_SECERT = final_step[OAUTH_TOKEN_SECRET]
+
+# twitter.search(q='python')
+#search = twitter.search_gen('python')
+#for result in search:
+#    print result
+
+#stream = MyStreamer(APP_KEY, APP_SECRET, OAUTH_TOKEN, OAUTH_TOKEN_SECRET)
+#stream.statuses.filter(track='twitter')
